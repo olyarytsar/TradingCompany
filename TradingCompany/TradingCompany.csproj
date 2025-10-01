@@ -7,4 +7,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TradingCompany.DAL\TradingCompany.DAL.csproj" />
+    <ProjectReference Include="..\TradingCompany.DTO\TradingCompany.DTO.csproj" />
+  </ItemGroup>
+
 </Project>
