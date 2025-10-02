@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using TradingCompany.ConsoleApp.Commands.Interfaces;
 using TradingCompany.DAL.Interfaces;
 
@@ -18,22 +19,26 @@ namespace TradingCompany.ConsoleApp.Interfaces
         public void Execute()
         {
             Console.Write("Enter ID: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
-            {
-                var item = _dal.GetById(id);
-                if (item != null)
-                {
-                    Console.WriteLine(item);
-                }
-                else
-                {
-                    Console.WriteLine($"{typeof(T).Name} with ID {id} not found.");
-                }
-            }
-            else
+            if (!int.TryParse(Console.ReadLine(), out int id))
             {
                 Console.WriteLine("Invalid ID format.");
+                return;
+            }
+
+            var item = _dal.GetById(id);
+            if (item == null)
+            {
+                Console.WriteLine($"{typeof(T).Name} with ID {id} not found.");
+                return;
+            }
+
+            // Вивід усіх властивостей об'єкта
+            foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                var value = prop.GetValue(item);
+                Console.WriteLine($"{prop.Name}: {value}");
             }
         }
     }
 }
+

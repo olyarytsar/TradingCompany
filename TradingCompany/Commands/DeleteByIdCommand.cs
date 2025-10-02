@@ -1,6 +1,6 @@
 ﻿using System;
-using TradingCompany.ConsoleApp.Commands.Interfaces;
 using TradingCompany.DAL.Interfaces;
+using TradingCompany.ConsoleApp.Commands.Interfaces;
 
 namespace TradingCompany.ConsoleApp.Interfaces
 {
@@ -18,23 +18,36 @@ namespace TradingCompany.ConsoleApp.Interfaces
         public void Execute()
         {
             Console.Write("Enter ID: ");
-            if (int.TryParse(Console.ReadLine(), out int id))
+            if (!int.TryParse(Console.ReadLine(), out int id))
             {
-                var success = _dal.Delete(id);
-                if (success)
-                {
-                    Console.WriteLine($"{typeof(T).Name} with ID {id} deleted.");
-                }
-                else
-                {
-                    Console.WriteLine($"{typeof(T).Name} with ID {id} not found.");
-                }
+                Console.WriteLine("Invalid ID format.");
+                return;
+            }
+
+            var item = _dal.GetById(id);
+            if (item == null)
+            {
+                Console.WriteLine($"{typeof(T).Name} with ID {id} not found.");
+                return;
+            }
+
+            Console.Write($"Are you sure you want to delete {typeof(T).Name} with ID {id}? (y/n): ");
+            var confirm = Console.ReadLine();
+            if (confirm?.ToLower() != "y")
+            {
+                Console.WriteLine("Delete cancelled.");
+                return;
+            }
+
+            var success = _dal.Delete(id);
+            if (success)
+            {
+                Console.WriteLine($"{typeof(T).Name} with ID {id} deleted successfully!");
             }
             else
             {
-                Console.WriteLine("Invalid ID format.");
+                Console.WriteLine($"Failed to delete {typeof(T).Name} with ID {id}.");
             }
         }
     }
 }
-
