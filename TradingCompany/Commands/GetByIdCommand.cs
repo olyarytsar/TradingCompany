@@ -32,7 +32,7 @@ namespace TradingCompany.ConsoleApp.Interfaces
                 return;
             }
 
-            // Вивід усіх властивостей об'єкта
+            
             foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
                 var value = prop.GetValue(item);
