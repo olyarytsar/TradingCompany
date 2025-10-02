@@ -64,7 +64,7 @@ namespace TradingCompany.ConsoleApp.AppMenu
                         break;
                     case 'q':
                     case 'Q':
-                        Console.WriteLine("Exiting...");
+                        Console.WriteLine("Exiting");
                         break;
                     default:
                         Console.WriteLine("Invalid choice. Try again.");

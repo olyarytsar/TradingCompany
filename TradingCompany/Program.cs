@@ -10,7 +10,7 @@ namespace TradingCompany.ConsoleApp
     {
         static void Main(string[] args)
         {
-            // Налаштування AutoMapper
+            
             var configExpression = new MapperConfigurationExpression();
             configExpression.AddProfile<OrderMap>();
             configExpression.AddProfile<ProductMap>();
@@ -24,10 +24,10 @@ namespace TradingCompany.ConsoleApp
             var mapperConfig = new MapperConfiguration(configExpression, loggerFactory);
             IMapper mapper = mapperConfig.CreateMapper();
 
-            // Зчитування connection string
+           
             string connectionString = "Data Source=localhost,1433;Database=Trading Company;Persist Security Info=True;User ID=sa;Password=MyStr0ng!Pass123;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;";
 
-            // Запуск меню
+           
             new AppMenuService(connectionString, mapper).Show();
         }
     }

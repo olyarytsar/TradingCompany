@@ -11,7 +11,7 @@ namespace TradingCompany.DTO
         public int CategoryId { get; set; }
         public string CategoryName { get; set; }
 
-        //test if can push
+       
 
         public override string ToString()
         {
