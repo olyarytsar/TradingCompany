@@ -35,6 +35,7 @@ namespace TradingCompany.DAL.Concrete
 
         public override bool Delete(int id)
         {
+            //comment
             throw new NotImplementedException();
         }
     }
