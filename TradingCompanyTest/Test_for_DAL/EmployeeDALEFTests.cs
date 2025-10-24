@@ -15,6 +15,7 @@ namespace TradingCompany.Test.DALEF
         private string _testConnectionString;
         private IMapper _mapper;
         private EmployeeDALEF _dal;
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -38,13 +39,15 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
         public void GetEmployeeById_ReturnsEmployee()
         {
             var all = _dal.GetAll();
-            if (!all.Any()) Assert.Ignore("No employees to test GetById");
+            if (!all.Any())
+                Assert.Ignore("No employees to test GetById.");
 
             var emp = _dal.GetById(all[0].EmployeeId);
             Assert.IsNotNull(emp);
@@ -52,19 +55,67 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteEmployee_WorksCorrectly()
+        public void InsertEmployee_WorksCorrectly()
         {
-            var emp = new Employee { FirstName = "Test", Login = "TestLogin", Password = "123", Phone = "1234567890", RoleId = 1 };
+            var emp = new Employee
+            {
+                FirstName = "TestInsert",
+                Login = "TestInsertLogin",
+                Password = "123",
+                Phone = "1111111111",
+                RoleId = 1
+            };
+
+            var created = _dal.Create(emp);
+            Assert.IsNotNull(created);
+            Assert.AreEqual("TestInsert", created.FirstName);
+            _dal.Delete(created.EmployeeId);
+        }
+
+        [Test]
+        public void UpdateEmployee_WorksCorrectly()
+        {
+            var emp = new Employee
+            {
+                FirstName = "TestUpdate",
+                Login = "TestUpdateLogin",
+                Password = "123",
+                Phone = "2222222222",
+                RoleId = 1
+            };
+
             var created = _dal.Create(emp);
             Assert.IsNotNull(created);
 
-            created.FirstName = "UpdatedTest";
+            created.FirstName = "UpdatedName";
             var updated = _dal.Update(created);
-            Assert.AreEqual("UpdatedTest", updated.FirstName);
 
-            var deleted = _dal.Delete(updated.EmployeeId);
+            Assert.IsNotNull(updated);
+            Assert.AreEqual("UpdatedName", updated.FirstName);
+            _dal.Delete(updated.EmployeeId);
+        }
+
+        [Test]
+        public void DeleteEmployee_WorksCorrectly()
+        {
+            var emp = new Employee
+            {
+                FirstName = "TestDelete",
+                Login = "TestDeleteLogin",
+                Password = "123",
+                Phone = "3333333333",
+                RoleId = 1
+            };
+
+            var created = _dal.Create(emp);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.EmployeeId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.EmployeeId));
+
+            var fromDb = _dal.GetById(created.EmployeeId);
+            Assert.IsNull(fromDb);
         }
     }
 }
+

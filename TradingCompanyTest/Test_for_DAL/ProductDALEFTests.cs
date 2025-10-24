@@ -28,7 +28,7 @@ namespace TradingCompany.Test.DALEF
             _testConnectionString = config.GetConnectionString("TestConnection");
 
             var configExpression = new MapperConfigurationExpression();
-            configExpression.AddProfile<ProductMap>(); // правильний мапінг для Product
+            configExpression.AddProfile<ProductMap>();
             var mapperConfig = new MapperConfiguration(configExpression, NullLoggerFactory.Instance);
             _mapper = mapperConfig.CreateMapper();
 
@@ -40,13 +40,15 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
         public void GetProductById_ReturnsProduct()
         {
             var all = _dal.GetAll();
-            if (!all.Any()) Assert.Ignore("No products to test GetById");
+            if (!all.Any())
+                Assert.Ignore("No products to test GetById.");
 
             var prod = _dal.GetById(all[0].ProductId);
             Assert.IsNotNull(prod);
@@ -54,11 +56,11 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteProduct_WorksCorrectly()
+        public void InsertProduct_WorksCorrectly()
         {
             var prod = new Product
             {
-                Name = "TestProd",
+                Name = "TestProduct_Insert",
                 CategoryId = 1,
                 SupplierId = 1,
                 Price = 100,
@@ -67,14 +69,54 @@ namespace TradingCompany.Test.DALEF
 
             var created = _dal.Create(prod);
             Assert.IsNotNull(created);
+            Assert.AreEqual("TestProduct_Insert", created.Name);
 
-            created.Price = 200;
+            _dal.Delete(created.ProductId);
+        }
+
+        [Test]
+        public void UpdateProduct_WorksCorrectly()
+        {
+            var prod = new Product
+            {
+                Name = "TestProduct_Update",
+                CategoryId = 1,
+                SupplierId = 1,
+                Price = 150,
+                QuantityInStock = 5
+            };
+
+            var created = _dal.Create(prod);
+            Assert.IsNotNull(created);
+
+            created.Price = 250;
             var updated = _dal.Update(created);
-            Assert.AreEqual(200, updated.Price);
+            Assert.IsNotNull(updated);
+            Assert.AreEqual(250, updated.Price);
 
-            var deleted = _dal.Delete(updated.ProductId);
+            _dal.Delete(updated.ProductId);
+        }
+
+        [Test]
+        public void DeleteProduct_WorksCorrectly()
+        {
+            var prod = new Product
+            {
+                Name = "TestProduct_Delete",
+                CategoryId = 1,
+                SupplierId = 1,
+                Price = 200,
+                QuantityInStock = 8
+            };
+
+            var created = _dal.Create(prod);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.ProductId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.ProductId));
+
+            var fromDb = _dal.GetById(created.ProductId);
+            Assert.IsNull(fromDb);
         }
     }
 }

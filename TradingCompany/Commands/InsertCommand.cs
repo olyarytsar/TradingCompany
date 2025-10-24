@@ -24,9 +24,13 @@ namespace TradingCompany.ConsoleApp.Interfaces
             {
                 if (!prop.CanWrite) continue;
 
-                
-                if (prop.Name.EndsWith("Id") || prop.PropertyType == typeof(DateTime) || prop.PropertyType == typeof(DateTime?))
+                // Пропускаємо лише PK (наприклад, ProductId, UserId і т.д.), але НЕ CategoryId чи SupplierId
+                if (prop.Name.Equals($"{typeof(T).Name}Id", StringComparison.OrdinalIgnoreCase) ||
+                    prop.PropertyType == typeof(DateTime) ||
+                    prop.PropertyType == typeof(DateTime?))
+                {
                     continue;
+                }
 
                 while (true)
                 {
@@ -55,7 +59,7 @@ namespace TradingCompany.ConsoleApp.Interfaces
 
                             prop.SetValue(instance, convertedValue);
                         }
-                        break; 
+                        break; // якщо все ок — виходимо з while
                     }
                     catch
                     {
@@ -72,6 +76,8 @@ namespace TradingCompany.ConsoleApp.Interfaces
             catch (Exception ex)
             {
                 Console.WriteLine($"Error inserting {typeof(T).Name}: {ex.Message}");
+                if (ex.InnerException != null)
+                    Console.WriteLine($"Inner: {ex.InnerException.Message}");
             }
         }
     }

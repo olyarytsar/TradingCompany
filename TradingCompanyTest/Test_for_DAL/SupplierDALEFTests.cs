@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using System;
 using System.Linq;
 using TradingCompany.DALEF.AutoMapper;
 using TradingCompany.DALEF.Concrete;
@@ -40,6 +39,7 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace TradingCompany.Test.DALEF
         {
             var all = _dal.GetAll();
             if (!all.Any())
-                Assert.Ignore("No suppliers to test GetById");
+                Assert.Ignore("No suppliers in database to test GetById.");
 
             var supplier = _dal.GetById(all[0].SupplierId);
             Assert.IsNotNull(supplier);
@@ -55,20 +55,65 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteSupplier_WorksCorrectly()
+        public void InsertSupplier_WorksCorrectly()
         {
-            var supplier = new Supplier { Brand = "TestBrand", Phone = "1234567890", Email = "test@test.com", Address = "Test Address" };
+            var supplier = new Supplier
+            {
+                Brand = "TestBrand_Insert",
+                Phone = "1111111111",
+                Email = "insert@test.com",
+                Address = "Insert Street"
+            };
+
             var created = _dal.Create(supplier);
             Assert.IsNotNull(created);
-            Assert.AreEqual("TestBrand", created.Brand);
+            Assert.AreEqual("TestBrand_Insert", created.Brand);
+
+            _dal.Delete(created.SupplierId);
+        }
+
+        [Test]
+        public void UpdateSupplier_WorksCorrectly()
+        {
+            var supplier = new Supplier
+            {
+                Brand = "TestBrand_Update",
+                Phone = "2222222222",
+                Email = "update@test.com",
+                Address = "Update Street"
+            };
+
+            var created = _dal.Create(supplier);
+            Assert.IsNotNull(created);
 
             created.Brand = "UpdatedBrand";
             var updated = _dal.Update(created);
+            Assert.IsNotNull(updated);
             Assert.AreEqual("UpdatedBrand", updated.Brand);
 
-            var deleted = _dal.Delete(updated.SupplierId);
+            _dal.Delete(updated.SupplierId);
+        }
+
+        [Test]
+        public void DeleteSupplier_WorksCorrectly()
+        {
+            var supplier = new Supplier
+            {
+                Brand = "TestBrand_Delete",
+                Phone = "3333333333",
+                Email = "delete@test.com",
+                Address = "Delete Street"
+            };
+
+            var created = _dal.Create(supplier);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.SupplierId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.SupplierId));
+
+            var fromDb = _dal.GetById(created.SupplierId);
+            Assert.IsNull(fromDb);
         }
     }
 }
+

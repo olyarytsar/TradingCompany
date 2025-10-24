@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NUnit.Framework;
-using System.Linq;
 using TradingCompany.DALEF.AutoMapper;
 using TradingCompany.DALEF.Concrete;
 using TradingCompany.DTO;
@@ -15,6 +14,7 @@ namespace TradingCompany.Test.DALEF
         private string _testConnectionString;
         private IMapper _mapper;
         private CategoryDALEF _dal;
+
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
@@ -45,7 +45,8 @@ namespace TradingCompany.Test.DALEF
         public void GetCategoryById_ReturnsCategory()
         {
             var all = _dal.GetAll();
-            if (all.Count == 0) Assert.Ignore("No categories in DB to test GetById.");
+            if (all.Count == 0)
+                Assert.Ignore("No categories in DB to test GetById.");
 
             var cat = _dal.GetById(all[0].CategoryId);
             Assert.IsNotNull(cat);
@@ -53,25 +54,38 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteCategory_WorksCorrectly()
+        public void InsertCategory_WorksCorrectly()
         {
-            
-            var category = new Category { CategoryName = "TestCategory" };
+            var category = new Category { CategoryName = "TestCategory_Insert" };
             var created = _dal.Create(category);
             Assert.IsNotNull(created);
-            Assert.AreEqual("TestCategory", created.CategoryName);
+            Assert.AreEqual("TestCategory_Insert", created.CategoryName);
+            _dal.Delete(created.CategoryId);
+        }
 
-            
-            created.CategoryName = "UpdatedCategory";
+        [Test]
+        public void UpdateCategory_WorksCorrectly()
+        {
+            var category = new Category { CategoryName = "TestCategory_ForUpdate" };
+            var created = _dal.Create(category);
+            Assert.IsNotNull(created);
+            created.CategoryName = "TestCategory_Updated";
             var updated = _dal.Update(created);
-            Assert.AreEqual("UpdatedCategory", updated.CategoryName);
+            Assert.IsNotNull(updated);
+            Assert.AreEqual("TestCategory_Updated", updated.CategoryName);
+            _dal.Delete(updated.CategoryId);
+        }
 
-            
-            var deleted = _dal.Delete(updated.CategoryId);
+        [Test]
+        public void DeleteCategory_WorksCorrectly()
+        {
+            var category = new Category { CategoryName = "TestCategory_ForDelete" };
+            var created = _dal.Create(category);
+            Assert.IsNotNull(created);
+            var deleted = _dal.Delete(created.CategoryId);
             Assert.IsTrue(deleted);
-            var fromDb = _dal.GetById(updated.CategoryId);
+            var fromDb = _dal.GetById(created.CategoryId);
             Assert.IsNull(fromDb);
         }
     }
 }
-

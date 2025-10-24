@@ -12,7 +12,6 @@ namespace TradingCompany.DTO
         public string CategoryName { get; set; }
 
        
-
         public override string ToString()
         {
             return $"{CategoryId}: {CategoryName}";

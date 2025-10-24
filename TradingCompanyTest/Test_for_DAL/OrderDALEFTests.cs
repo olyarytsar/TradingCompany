@@ -28,7 +28,7 @@ namespace TradingCompany.Test.DALEF
             _testConnectionString = config.GetConnectionString("TestConnection");
 
             var configExpression = new MapperConfigurationExpression();
-            configExpression.AddProfile<OrderMap>(); 
+            configExpression.AddProfile<OrderMap>();
             var mapperConfig = new MapperConfiguration(configExpression, NullLoggerFactory.Instance);
             _mapper = mapperConfig.CreateMapper();
 
@@ -40,13 +40,15 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
         public void GetOrderById_ReturnsOrder()
         {
             var all = _dal.GetAll();
-            if (!all.Any()) Assert.Ignore("No orders to test GetById");
+            if (!all.Any())
+                Assert.Ignore("No orders to test GetById.");
 
             var order = _dal.GetById(all[0].OrderId);
             Assert.IsNotNull(order);
@@ -54,7 +56,25 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteOrder_WorksCorrectly()
+        public void InsertOrder_WorksCorrectly()
+        {
+            var order = new Order
+            {
+                EmployeeId = 1,
+                OrderDate = DateTime.Now,
+                TotalAmount = 150,
+                IsActive = true
+            };
+
+            var created = _dal.Create(order);
+            Assert.IsNotNull(created);
+            Assert.AreEqual(150, created.TotalAmount);
+
+            _dal.Delete(created.OrderId);
+        }
+
+        [Test]
+        public void UpdateOrder_WorksCorrectly()
         {
             var order = new Order
             {
@@ -67,13 +87,33 @@ namespace TradingCompany.Test.DALEF
             var created = _dal.Create(order);
             Assert.IsNotNull(created);
 
-            created.TotalAmount = 200;
+            created.TotalAmount = 250;
             var updated = _dal.Update(created);
-            Assert.AreEqual(200, updated.TotalAmount);
+            Assert.IsNotNull(updated);
+            Assert.AreEqual(250, updated.TotalAmount);
 
-            var deleted = _dal.Delete(updated.OrderId);
+            _dal.Delete(updated.OrderId);
+        }
+
+        [Test]
+        public void DeleteOrder_WorksCorrectly()
+        {
+            var order = new Order
+            {
+                EmployeeId = 1,
+                OrderDate = DateTime.Now,
+                TotalAmount = 300,
+                IsActive = true
+            };
+
+            var created = _dal.Create(order);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.OrderId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.OrderId));
+
+            var fromDb = _dal.GetById(created.OrderId);
+            Assert.IsNull(fromDb);
         }
     }
 }

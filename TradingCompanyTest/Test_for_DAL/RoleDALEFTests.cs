@@ -39,13 +39,15 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
         public void GetRoleById_ReturnsRole()
         {
             var all = _dal.GetAll();
-            if (!all.Any()) Assert.Ignore("No roles to test GetById");
+            if (!all.Any())
+                Assert.Ignore("No roles to test GetById.");
 
             var role = _dal.GetById(all[0].RoleId);
             Assert.IsNotNull(role);
@@ -53,20 +55,44 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteRole_WorksCorrectly()
+        public void InsertRole_WorksCorrectly()
         {
-            var role = new Role { RoleName = "TestRole" };
+            var role = new Role { RoleName = "TestRole_Insert" };
+            var created = _dal.Create(role);
+            Assert.IsNotNull(created);
+            Assert.AreEqual("TestRole_Insert", created.RoleName);
+
+            _dal.Delete(created.RoleId);
+        }
+
+        [Test]
+        public void UpdateRole_WorksCorrectly()
+        {
+            var role = new Role { RoleName = "TestRole_Update" };
             var created = _dal.Create(role);
             Assert.IsNotNull(created);
 
-            created.RoleName = "UpdatedRole";
+            created.RoleName = "UpdatedRoleName";
             var updated = _dal.Update(created);
-            Assert.AreEqual("UpdatedRole", updated.RoleName);
+            Assert.IsNotNull(updated);
+            Assert.AreEqual("UpdatedRoleName", updated.RoleName);
 
-            var deleted = _dal.Delete(updated.RoleId);
+            _dal.Delete(updated.RoleId);
+        }
+
+        [Test]
+        public void DeleteRole_WorksCorrectly()
+        {
+            var role = new Role { RoleName = "TestRole_Delete" };
+            var created = _dal.Create(role);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.RoleId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.RoleId));
+
+            var fromDb = _dal.GetById(created.RoleId);
+            Assert.IsNull(fromDb);
         }
     }
-
 }
+

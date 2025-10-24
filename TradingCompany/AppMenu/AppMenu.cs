@@ -30,7 +30,7 @@ namespace TradingCompany.ConsoleApp.AppMenu
                 Console.WriteLine("3 - Role Menu");
                 Console.WriteLine("4 - Product Menu");
                 Console.WriteLine("5 - Order Menu");
-                Console.WriteLine("6 - OrderItem Menu");
+                Console.WriteLine("6 - Order Item Menu");
                 Console.WriteLine("7 - Supplier Menu");
                 Console.WriteLine("q - Quit\n");
 

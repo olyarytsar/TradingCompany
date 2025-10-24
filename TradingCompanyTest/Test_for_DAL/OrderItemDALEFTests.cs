@@ -28,7 +28,7 @@ namespace TradingCompany.Test.DALEF
             _testConnectionString = config.GetConnectionString("TestConnection");
 
             var configExpression = new MapperConfigurationExpression();
-            configExpression.AddProfile<OrderItemMap>(); 
+            configExpression.AddProfile<OrderItemMap>();
             var mapperConfig = new MapperConfiguration(configExpression, NullLoggerFactory.Instance);
             _mapper = mapperConfig.CreateMapper();
 
@@ -40,13 +40,15 @@ namespace TradingCompany.Test.DALEF
         {
             var list = _dal.GetAll();
             Assert.IsNotNull(list);
+            Assert.IsTrue(list.Count >= 0);
         }
 
         [Test]
         public void GetOrderItemById_ReturnsItem()
         {
             var all = _dal.GetAll();
-            if (!all.Any()) Assert.Ignore("No order items to test GetById");
+            if (!all.Any())
+                Assert.Ignore("No order items to test GetById.");
 
             var item = _dal.GetById(all[0].OrderItemId);
             Assert.IsNotNull(item);
@@ -54,7 +56,24 @@ namespace TradingCompany.Test.DALEF
         }
 
         [Test]
-        public void InsertUpdateDeleteOrderItem_WorksCorrectly()
+        public void InsertOrderItem_WorksCorrectly()
+        {
+            var item = new OrderItem
+            {
+                OrderId = 1,
+                ProductId = 1,
+                Quantity = 5
+            };
+
+            var created = _dal.Create(item);
+            Assert.IsNotNull(created);
+            Assert.AreEqual(5, created.Quantity);
+
+            _dal.Delete(created.OrderItemId);
+        }
+
+        [Test]
+        public void UpdateOrderItem_WorksCorrectly()
         {
             var item = new OrderItem
             {
@@ -68,11 +87,31 @@ namespace TradingCompany.Test.DALEF
 
             created.Quantity = 20;
             var updated = _dal.Update(created);
+            Assert.IsNotNull(updated);
             Assert.AreEqual(20, updated.Quantity);
 
-            var deleted = _dal.Delete(updated.OrderItemId);
+            _dal.Delete(updated.OrderItemId);
+        }
+
+        [Test]
+        public void DeleteOrderItem_WorksCorrectly()
+        {
+            var item = new OrderItem
+            {
+                OrderId = 1,
+                ProductId = 1,
+                Quantity = 15
+            };
+
+            var created = _dal.Create(item);
+            Assert.IsNotNull(created);
+
+            var deleted = _dal.Delete(created.OrderItemId);
             Assert.IsTrue(deleted);
-            Assert.IsNull(_dal.GetById(updated.OrderItemId));
+
+            var fromDb = _dal.GetById(created.OrderItemId);
+            Assert.IsNull(fromDb);
         }
     }
 }
+
