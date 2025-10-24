@@ -1,7 +1,8 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using TradingCompany.ConsoleApp.Commands.Interfaces;
 using TradingCompany.DAL.Interfaces;
-using System.Reflection;
 
 namespace TradingCompany.ConsoleApp.Interfaces
 {
@@ -22,12 +23,19 @@ namespace TradingCompany.ConsoleApp.Interfaces
 
             foreach (var prop in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (!prop.CanWrite) continue;
+                if (!prop.CanWrite)
+                    continue;
 
-                // Пропускаємо лише PK (наприклад, ProductId, UserId і т.д.), але НЕ CategoryId чи SupplierId
                 if (prop.Name.Equals($"{typeof(T).Name}Id", StringComparison.OrdinalIgnoreCase) ||
                     prop.PropertyType == typeof(DateTime) ||
-                    prop.PropertyType == typeof(DateTime?))
+                    prop.PropertyType == typeof(DateTime?) ||
+                    (!prop.PropertyType.IsPrimitive &&
+                     prop.PropertyType != typeof(string) &&
+                     prop.PropertyType != typeof(decimal) &&
+                     prop.PropertyType != typeof(double) &&
+                     prop.PropertyType != typeof(float) &&
+                     prop.PropertyType != typeof(bool) &&
+                     Nullable.GetUnderlyingType(prop.PropertyType) == null))
                 {
                     continue;
                 }
@@ -54,12 +62,14 @@ namespace TradingCompany.ConsoleApp.Interfaces
                                 Type t when t == typeof(double) => double.Parse(input, System.Globalization.CultureInfo.InvariantCulture),
                                 Type t when t == typeof(float) => float.Parse(input, System.Globalization.CultureInfo.InvariantCulture),
                                 Type t when t == typeof(bool) => input.Trim().ToLower() == "true" || input.Trim() == "1",
-                                _ => Convert.ChangeType(input, targetType)
+                                Type t when t == typeof(string) => input,
+                                _ => throw new InvalidOperationException($"Unsupported property type: {prop.PropertyType}")
                             };
 
                             prop.SetValue(instance, convertedValue);
                         }
-                        break; // якщо все ок — виходимо з while
+
+                        break; 
                     }
                     catch
                     {

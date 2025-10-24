@@ -29,6 +29,7 @@ namespace TradingCompany.Test.DALEF
 
             var configExpression = new MapperConfigurationExpression();
             configExpression.AddProfile<OrderItemMap>();
+            configExpression.AddProfile<ProductMap>();
             var mapperConfig = new MapperConfiguration(configExpression, NullLoggerFactory.Instance);
             _mapper = mapperConfig.CreateMapper();
 
@@ -47,8 +48,8 @@ namespace TradingCompany.Test.DALEF
         public void GetOrderItemById_ReturnsItem()
         {
             var all = _dal.GetAll();
-            if (!all.Any())
-                Assert.Ignore("No order items to test GetById.");
+            //if (!all.Any())
+            //    Assert.Ignore("No order items to test GetById.");
 
             var item = _dal.GetById(all[0].OrderItemId);
             Assert.IsNotNull(item);
