@@ -30,7 +30,6 @@ namespace TradingCompany.ConsoleApp
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            //string connectionString = "Data Source=localhost,1433;Database=Trading Company;Persist Security Info=True;User ID=sa;Password=MyStr0ng!Pass123;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;";
             string connectionString = config.GetConnectionString("DefaultConnection");
 
             new AppMenuService(connectionString, mapper).Show();

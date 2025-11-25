@@ -14,10 +14,12 @@ namespace TradingCompany.DTO
         public string Password { get; set; }
         public string Phone { get; set; }
         public int RoleId { get; set; }
+        public virtual Role? Role { get; set; }
 
         public override string ToString()
         {
-            return $"{EmployeeId}: {FirstName} ({Login}) - {Phone}";
+            return $"{EmployeeId}: {FirstName} ({Login}) - {Phone}, Role: {Role}";
         }
     }
 }
+

@@ -55,7 +55,10 @@ namespace TradingCompany.DALEF.Concrete
             using var ctx = new TradingCompContext(_connStr);
             try
             {
-                var models = ctx.Employees.OrderBy(e => e.EmployeeId).ToList();
+                var models = ctx.Employees
+                                .Include(e => e.Role) 
+                                .OrderBy(e => e.EmployeeId)
+                                .ToList();
                 return _mapper.Map<List<EmpDTO>>(models);
             }
             catch (Exception ex)
@@ -70,7 +73,9 @@ namespace TradingCompany.DALEF.Concrete
             using var ctx = new TradingCompContext(_connStr);
             try
             {
-                var model = ctx.Employees.Find(id);
+                var model = ctx.Employees
+                               .Include(e => e.Role) 
+                               .FirstOrDefault(e => e.EmployeeId == id);
                 return _mapper.Map<EmpDTO>(model);
             }
             catch (Exception ex)
@@ -79,6 +84,7 @@ namespace TradingCompany.DALEF.Concrete
                 return null;
             }
         }
+
 
         public override EmpDTO Update(EmpDTO entity)
         {

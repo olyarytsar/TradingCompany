@@ -19,9 +19,21 @@ namespace TradingCompany.DALEF.Concrete
             using var ctx = new TradingCompContext(_connStr);
             try
             {
+                var employee = ctx.Employees.Find(entity.EmployeeId);
+                if (employee == null)
+                {
+                    throw new Exception($"Employee with ID {entity.EmployeeId} does not exist.");
+                }
+
+                if (entity.TotalAmount < 0) entity.TotalAmount = 0m;
+
+                if (entity.OrderDate == default) entity.OrderDate = DateTime.Now;
+
                 var model = _mapper.Map<OrderModel>(entity);
+
                 ctx.Orders.Add(model);
                 ctx.SaveChanges();
+
                 entity.OrderId = model.OrderId;
                 return entity;
             }
@@ -31,6 +43,7 @@ namespace TradingCompany.DALEF.Concrete
                 return null;
             }
         }
+
 
         public override bool Delete(int id)
         {

@@ -19,7 +19,7 @@ namespace TradingCompany.DALEF.Concrete
             using var ctx = new TradingCompContext(_connStr);
             try
             {
-                var model = _mapper.Map<ProductModel>(entity);
+                var model = _mapper.Map<ProductModel>(entity); 
                 ctx.Products.Add(model);
                 ctx.SaveChanges();
                 entity.ProductId = model.ProductId;
