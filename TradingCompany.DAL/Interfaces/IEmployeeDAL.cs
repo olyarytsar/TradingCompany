@@ -9,5 +9,8 @@ namespace TradingCompany.DAL.Interfaces
 {
     public interface IEmployeeDAL : IGenericDAL<Employee>
     {
+            bool Login(string login, string password);
+            Employee GetByLogin(string login);
+        
     }
 }

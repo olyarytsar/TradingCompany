@@ -23,9 +23,13 @@ public partial class Employee
     public string Login { get; set; } = null!;
 
     [Column("password")]
-    [StringLength(50)]
+    [StringLength(255)]
     [Unicode(false)]
     public string Password { get; set; } = null!;
+
+    
+    [Column("salt")]
+    public Guid? Salt { get; set; }
 
     [Column("phone")]
     [StringLength(50)]

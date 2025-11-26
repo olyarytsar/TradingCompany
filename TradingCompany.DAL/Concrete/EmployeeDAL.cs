@@ -42,5 +42,14 @@ namespace TradingCompany.DAL.Concrete
             
             throw new NotImplementedException();
         }
+        public bool Login(string login, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Employee GetByLogin(string login)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
