@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradingCompany.DAL.Concrete;
+using TradingCompany.DAL.Interfaces;
 using TradingCompany.DALEF.Concrete.ctx;
 using SupplierDTO = TradingCompany.DTO.Supplier;
 using SupplierModel = TradingCompany.DALEF.Models.Supplier;
 
 namespace TradingCompany.DALEF.Concrete
 {
-    public class SupplierDALEF : GenericDAL<SupplierDTO>
+    public class SupplierDALEF : GenericDAL<SupplierDTO>, ISupplierDAL
     {
         public SupplierDALEF(string connStr, IMapper mapper) : base(connStr, mapper) { }
 

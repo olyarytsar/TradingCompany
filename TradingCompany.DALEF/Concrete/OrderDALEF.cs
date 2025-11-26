@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradingCompany.DAL.Concrete;
+using TradingCompany.DAL.Interfaces;
 using TradingCompany.DALEF.Concrete.ctx;
 using OrderDTO = TradingCompany.DTO.Order;
 using OrderModel = TradingCompany.DALEF.Models.Order;
 
 namespace TradingCompany.DALEF.Concrete
 {
-    public class OrderDALEF : GenericDAL<OrderDTO>
+    public class OrderDALEF : GenericDAL<OrderDTO>, IOrderDAL
     {
         public OrderDALEF(string connStr, IMapper mapper) : base(connStr, mapper) { }
 

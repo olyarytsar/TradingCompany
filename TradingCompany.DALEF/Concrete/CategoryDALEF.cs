@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradingCompany.DAL.Concrete;
+using TradingCompany.DAL.Interfaces;
 using TradingCompany.DALEF.Concrete.ctx;
 using CategoryDTO = TradingCompany.DTO.Category;
 using CategoryModel = TradingCompany.DALEF.Models.Category;
 
 namespace TradingCompany.DALEF.Concrete
 {
-    public class CategoryDALEF : GenericDAL<CategoryDTO>
+    public class CategoryDALEF : GenericDAL<CategoryDTO>, ICategoryDAL
     {
         public CategoryDALEF(string connStr, IMapper mapper) : base(connStr, mapper) { }
 

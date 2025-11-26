@@ -4,13 +4,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradingCompany.DAL.Concrete;
+using TradingCompany.DAL.Interfaces;
 using TradingCompany.DALEF.Concrete.ctx;
 using RoleDTO = TradingCompany.DTO.Role;
 using RoleModel = TradingCompany.DALEF.Models.Role;
 
 namespace TradingCompany.DALEF.Concrete
 {
-    public class RoleDALEF : GenericDAL<RoleDTO>
+    public class RoleDALEF : GenericDAL<RoleDTO>, IRoleDAL
     {
         public RoleDALEF(string connStr, IMapper mapper) : base(connStr, mapper) { }
 

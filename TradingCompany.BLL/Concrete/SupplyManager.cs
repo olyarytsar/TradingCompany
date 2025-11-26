@@ -48,7 +48,7 @@ namespace TradingCompany.BLL.Concrete
            
             if (productsToCheck.Any(p => p.SupplierId != supplierId))
             {
-                throw new InvalidOperationException("Спроба замовити товари, що не належать обраному постачальнику.");
+                throw new InvalidOperationException("Attempt to order items that do not belong to the selected supplier.");
             }
 
             

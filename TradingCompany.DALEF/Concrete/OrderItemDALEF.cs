@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TradingCompany.DAL.Concrete;
+using TradingCompany.DAL.Interfaces;
 using TradingCompany.DALEF.Concrete.ctx;
 using OrderItemDTO = TradingCompany.DTO.OrderItem;
 using OrderItemModel = TradingCompany.DALEF.Models.OrderItem;
@@ -11,7 +12,7 @@ using OrderItemModel = TradingCompany.DALEF.Models.OrderItem;
 
 namespace TradingCompany.DALEF.Concrete
 {
-    public class OrderItemDALEF : GenericDAL<OrderItemDTO>
+    public class OrderItemDALEF : GenericDAL<OrderItemDTO>, IOrderItemDAL
     {
         public OrderItemDALEF(string connStr, IMapper mapper) : base(connStr, mapper) { }
 
