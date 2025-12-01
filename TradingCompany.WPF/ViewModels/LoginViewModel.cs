@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows;
+using System.Windows; // Потрібно для Application
 using System.Windows.Controls;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
+using TradingCompany.DTO;
 using TradingCompany.WPF.Commands;
-using TradingCompany.WPF.Windows; // Переконайтеся, що LoginWindow знаходиться тут
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -19,12 +19,22 @@ namespace TradingCompany.WPF.ViewModels
             set { _login = value; OnPropertyChanged(); }
         }
 
+        // Подія успішного входу
+        public Action<Employee> LoginSuccess { get; set; }
+
         public ICommand LoginCommand { get; }
+
+        // Змінили назву на ExitCommand для ясності
+        public ICommand ExitCommand { get; }
 
         public LoginViewModel(IAuthManager authManager)
         {
             _authManager = authManager;
+
             LoginCommand = new RelayCommand(ExecuteLogin);
+
+            // Ця команда повністю закриває програму
+            ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
         }
 
         private void ExecuteLogin(object parameter)
@@ -34,7 +44,7 @@ namespace TradingCompany.WPF.ViewModels
 
             if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Please enter both login and password.", "Authentication Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please enter credentials.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -46,40 +56,21 @@ namespace TradingCompany.WPF.ViewModels
                 {
                     if (_authManager.IsWarehouseManager(employee))
                     {
-                        MessageBox.Show($"Welcome, {employee.FirstName}! Logging in as Warehouse Manager.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-
-                        // !!! ОСНОВНА ЗМІНА ТУТ !!!
-                        // Ми шукаємо активне вікно логіну і ставимо йому DialogResult = true.
-                        // Це автоматично закриває вікно і повідомляє App.xaml.cs, що можна відкривати головне вікно.
-                        foreach (Window window in Application.Current.Windows)
-                        {
-                            if (window is LoginWindow)
-                            {
-                                window.DialogResult = true;
-                                break;
-                            }
-                        }
+                        LoginSuccess?.Invoke(employee);
                     }
                     else
                     {
-                       
-                        string actualRole = employee.Role != null ? employee.Role.RoleName : "NULL (Роль не знайдена!)";
-
-                        // Виводимо довжину, щоб побачити приховані пробіли (наприклад "Manager   ")
-                        string debugInfo = $"Role: '{actualRole}', Length: {actualRole.Length}";
-
-                        MessageBox.Show($"Доступ відхилено!\nСистема бачить вашу роль як:\n{debugInfo}\n\nОчікується: 'Manager'",
-                                        "Debug Info", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Access Denied.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Invalid login or password.", "Authentication Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Invalid login/password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred: {ex.Message}", "System Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error: {ex.Message}");
             }
         }
     }

@@ -1,11 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using System.Windows;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
 using TradingCompany.WPF.Commands;
-using TradingCompany.WPF.Windows;
-
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -15,6 +12,8 @@ namespace TradingCompany.WPF.ViewModels
         public ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
 
         private Product _selectedProduct;
+        private Employee _currentUser;
+
         public Product SelectedProduct
         {
             get => _selectedProduct;
@@ -29,19 +28,17 @@ namespace TradingCompany.WPF.ViewModels
             {
                 _searchText = value;
                 OnPropertyChanged();
-                LoadData(); 
+                LoadData();
             }
         }
 
-        
-        public ICommand LogoutCommand { get; }
+       
         public ICommand RefreshCommand { get; }
 
         public WarehouseManagerViewModel(IProductManager productManager)
         {
             _productManager = productManager;
 
-            LogoutCommand = new RelayCommand(ExecuteLogout);
             RefreshCommand = new RelayCommand(obj => LoadData());
 
             LoadData();
@@ -50,7 +47,6 @@ namespace TradingCompany.WPF.ViewModels
         private void LoadData()
         {
             Products.Clear();
-
             var productsFromDb = _productManager.GetProducts(SearchText, "Name_Asc");
 
             foreach (var p in productsFromDb)
@@ -59,20 +55,9 @@ namespace TradingCompany.WPF.ViewModels
             }
         }
 
-        private void ExecuteLogout(object obj)
+        public void SetCurrentUser(Employee employee)
         {
-            
-            var loginWindow = App.Services.GetService(typeof(LoginWindow)) as Window;
-            loginWindow.Show();
-
-            foreach (Window window in Application.Current.Windows)
-            {
-                if (window is WarehouseManagerWindow)
-                {
-                    window.Close();
-                    break;
-                }
-            }
+            _currentUser = employee;
         }
     }
 }
