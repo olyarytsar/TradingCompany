@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TradingCompany.DTO
+﻿namespace TradingCompany.DTO
 {
     public class OrderItem
     {
@@ -12,10 +6,12 @@ namespace TradingCompany.DTO
         public int OrderId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }
-        public virtual Product? Product { get; set; }
+
+        public Product? Product { get; set; }
+
         public override string ToString()
         {
-            return $"{OrderItemId}: Order {OrderId}, Product {Product}, Quantity: {Quantity}";
+            return $"{OrderItemId}: Product {Product?.Name}, Qty: {Quantity}";
         }
     }
 }

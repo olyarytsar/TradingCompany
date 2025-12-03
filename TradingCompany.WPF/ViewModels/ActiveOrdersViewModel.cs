@@ -3,7 +3,8 @@ using System.Windows;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;
+using TradingCompany.WPF.Commands;  
+using TradingCompany.WPF.Templates; 
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -26,6 +27,8 @@ namespace TradingCompany.WPF.ViewModels
         public ActiveOrdersViewModel(ISupplyManager supplyManager)
         {
             _supplyManager = supplyManager;
+
+           
             CancelOrderCommand = new RelayCommand(CancelOrder);
             SaveChangesCommand = new RelayCommand(SaveChanges);
 
@@ -46,15 +49,14 @@ namespace TradingCompany.WPF.ViewModels
         {
             if (SelectedOrder == null) return;
 
-            var result = MessageBox.Show($"Ви впевнені, що хочете скасувати замовлення #{SelectedOrder.OrderId}?",
-                                         "Підтвердження", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            var result = MessageBox.Show($"Are you sure you want to cancel order #{SelectedOrder.OrderId}?",
+                                         "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
-                // Логіка скасування: ставимо IsActive = false
                 SelectedOrder.IsActive = false;
                 _supplyManager.UpdateOrder(SelectedOrder);
-                LoadOrders(); // Оновлюємо список (скасоване замовлення зникне зі списку активних)
+                LoadOrders();
             }
         }
 
@@ -65,11 +67,11 @@ namespace TradingCompany.WPF.ViewModels
                 try
                 {
                     _supplyManager.UpdateOrder(SelectedOrder);
-                    MessageBox.Show("Зміни збережено!", "Успіх", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Changes saved!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (System.Exception ex)
                 {
-                    MessageBox.Show($"Помилка: {ex.Message}");
+                    MessageBox.Show($"Error: {ex.Message}");
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using System.Windows;
+using System.Windows.Controls;
 
 namespace TradingCompany.WPF.Windows
 {
@@ -7,6 +8,11 @@ namespace TradingCompany.WPF.Windows
         public ActiveOrdersView()
         {
             InitializeComponent();
+        }
+        private void CloseDetails_Click(object sender, RoutedEventArgs e)
+        {
+            
+            OrdersGrid.SelectedItem = null;
         }
     }
 }

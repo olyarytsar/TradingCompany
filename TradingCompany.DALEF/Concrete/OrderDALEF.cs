@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore; 
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +27,6 @@ namespace TradingCompany.DALEF.Concrete
                 }
 
                 if (entity.TotalAmount < 0) entity.TotalAmount = 0m;
-
                 if (entity.OrderDate == default) entity.OrderDate = DateTime.Now;
 
                 var model = _mapper.Map<OrderModel>(entity);
@@ -44,7 +43,6 @@ namespace TradingCompany.DALEF.Concrete
                 return null;
             }
         }
-
 
         public override bool Delete(int id)
         {
@@ -70,10 +68,17 @@ namespace TradingCompany.DALEF.Concrete
             try
             {
                 var models = ctx.Orders
-                    .Include(o => o.Employee)
+                    .Include(o => o.Employee) 
+
+                    .Include(o => o.OrderItems) 
+                        .ThenInclude(oi => oi.Product) 
+                            .ThenInclude(p => p.Supplier) 
                     .Include(o => o.OrderItems)
-                    .OrderBy(o => o.OrderId)
+                        .ThenInclude(oi => oi.Product)
+                            .ThenInclude(p => p.Category) 
+                    .OrderByDescending(o => o.OrderDate)
                     .ToList();
+
                 return _mapper.Map<List<OrderDTO>>(models);
             }
             catch (Exception ex)
@@ -82,7 +87,6 @@ namespace TradingCompany.DALEF.Concrete
                 return new List<OrderDTO>();
             }
         }
-
         public override OrderDTO GetById(int id)
         {
             using var ctx = new TradingCompContext(_connStr);
@@ -91,7 +95,10 @@ namespace TradingCompany.DALEF.Concrete
                 var model = ctx.Orders
                     .Include(o => o.Employee)
                     .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Product)
+                            .ThenInclude(p => p.Supplier)
                     .FirstOrDefault(o => o.OrderId == id);
+
                 return _mapper.Map<OrderDTO>(model);
             }
             catch (Exception ex)
@@ -108,7 +115,10 @@ namespace TradingCompany.DALEF.Concrete
             {
                 var existing = ctx.Orders.Find(entity.OrderId);
                 if (existing == null) throw new Exception("Order not found");
+
+               
                 _mapper.Map(entity, existing);
+
                 ctx.SaveChanges();
                 return _mapper.Map<OrderDTO>(existing);
             }

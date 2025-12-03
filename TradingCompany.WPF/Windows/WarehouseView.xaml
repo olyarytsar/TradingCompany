@@ -23,7 +23,9 @@
             <TextBox Grid.Column="1" Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"/>
             <Button Grid.Column="2" Content="Refresh" Command="{Binding RefreshCommand}" Width="120" Margin="15,0,0,0"/>
         </Grid>
-
+<StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Right" Margin="0,0,140,0">
+    
+</StackPanel>
         <DataGrid Grid.Row="1" ItemsSource="{Binding Products}" 
                   SelectedItem="{Binding SelectedProduct}"
                   AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
@@ -32,6 +34,9 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="№" Binding="{Binding ProductId}" Width="60"/>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+
+                <DataGridTextColumn Header="Supplier" Binding="{Binding Supplier.Brand}" Width="150"/>
+
                 <DataGridTextColumn Header="Price" Binding="{Binding Price, StringFormat=C}" Width="100"/>
                 <DataGridTextColumn Header="Stock" Binding="{Binding QuantityInStock}" Width="100"/>
                 <DataGridTextColumn Header="Category" Binding="{Binding Category.CategoryName}" Width="150"/>

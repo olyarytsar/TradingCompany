@@ -1,15 +1,15 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;
-using System.Collections.Generic;
-using System.Linq;
+using TradingCompany.WPF.Commands;  
+using TradingCompany.WPF.Templates; 
 
 namespace TradingCompany.WPF.ViewModels
 {
-   
     public class CartItem
     {
         public Product Product { get; set; }
@@ -23,14 +23,10 @@ namespace TradingCompany.WPF.ViewModels
         private readonly ISupplyManager _supplyManager;
         private Employee _currentUser;
 
-      
         public ObservableCollection<Supplier> Suppliers { get; set; } = new ObservableCollection<Supplier>();
         public ObservableCollection<Product> Products { get; set; } = new ObservableCollection<Product>();
-
-     
         public ObservableCollection<CartItem> OrderItems { get; set; } = new ObservableCollection<CartItem>();
 
-      
         private Supplier _selectedSupplier;
         public Supplier SelectedSupplier
         {
@@ -42,7 +38,6 @@ namespace TradingCompany.WPF.ViewModels
                     _selectedSupplier = value;
                     OnPropertyChanged();
                     LoadProductsForSupplier();
-                   
                     OrderItems.Clear();
                     OnPropertyChanged(nameof(TotalOrderSum));
                 }
@@ -53,14 +48,38 @@ namespace TradingCompany.WPF.ViewModels
         public Product SelectedProduct
         {
             get => _selectedProduct;
-            set { _selectedProduct = value; OnPropertyChanged(); }
+            set
+            {
+                _selectedProduct = value;
+                OnPropertyChanged();
+
+                ClearErrors(nameof(SelectedProduct));
+                if (_selectedProduct == null)
+                {
+                    AddError(nameof(SelectedProduct), "Product is required");
+                }
+            }
         }
 
         private int _quantityToAdd = 1;
         public int QuantityToAdd
         {
             get => _quantityToAdd;
-            set { _quantityToAdd = value; OnPropertyChanged(); }
+            set
+            {
+                _quantityToAdd = value;
+                OnPropertyChanged();
+
+                ClearErrors(nameof(QuantityToAdd));
+                if (_quantityToAdd <= 0)
+                {
+                    AddError(nameof(QuantityToAdd), "Quantity must be greater than 0");
+                }
+                else if (_quantityToAdd > 1000)
+                {
+                    AddError(nameof(QuantityToAdd), "Quantity allows max 1000 items");
+                }
+            }
         }
 
         private CartItem _selectedCartItem;
@@ -70,10 +89,8 @@ namespace TradingCompany.WPF.ViewModels
             set { _selectedCartItem = value; OnPropertyChanged(); }
         }
 
-       
         public decimal TotalOrderSum => OrderItems.Sum(x => x.TotalPrice);
 
-        
         public ICommand AddItemCommand { get; }
         public ICommand RemoveItemCommand { get; }
         public ICommand SubmitOrderCommand { get; }
@@ -115,9 +132,9 @@ namespace TradingCompany.WPF.ViewModels
 
         private void AddItem(object obj)
         {
-            if (SelectedProduct == null || QuantityToAdd <= 0)
+            if (SelectedProduct == null || QuantityToAdd <= 0 || HasErrors)
             {
-                MessageBox.Show("Please select a product and a valid quantity.");
+                MessageBox.Show("Please correct errors before adding item (check red fields).", "Validation Error");
                 return;
             }
 
@@ -160,7 +177,6 @@ namespace TradingCompany.WPF.ViewModels
 
             try
             {
-                
                 var itemsDict = new Dictionary<int, int>();
                 foreach (var item in OrderItems)
                 {

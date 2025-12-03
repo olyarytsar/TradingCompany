@@ -34,9 +34,7 @@ namespace TradingCompany.BLL.Concrete
 
             string role = employee.Role.RoleName;
 
-            return role == "Admin" ||
-                   role == "Manager" ||
-                   role == "Casshier";
+            return role == "Manager";
 
 
         }

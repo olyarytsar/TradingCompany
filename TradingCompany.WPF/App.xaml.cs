@@ -22,9 +22,9 @@ namespace TradingCompany.WPF
             Services = BuildServiceProvider();
             Current.ShutdownMode = ShutdownMode.OnMainWindowClose;
 
-            // Просто запускаємо головне вікно
+            
             var mainWindow = Services.GetRequiredService<MainWindow>();
-            // Встановлюємо MainViewModel як DataContext
+            
             mainWindow.DataContext = Services.GetRequiredService<MainViewModel>();
 
             mainWindow.Show();
@@ -35,7 +35,7 @@ namespace TradingCompany.WPF
             var services = new ServiceCollection();
             services.AddLogging(builder => { builder.AddConsole(); });
 
-            // AutoMapper (ваш старий код мапінгу залишається тут)
+          
             services.AddAutoMapper(cfg =>
             {
                 cfg.CreateMap<TradingCompany.DALEF.Models.Role, Role>().ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role1)).ReverseMap();
@@ -47,7 +47,7 @@ namespace TradingCompany.WPF
                 cfg.CreateMap<TradingCompany.DALEF.Models.OrderItem, OrderItem>().ReverseMap();
             });
 
-            // DAL & BLL (ваш старий код залишається)
+          
             services.AddTransient<IEmployeeDAL>(sp => new EmployeeDALEF(ConnectionString, sp.GetRequiredService<IMapper>()));
             services.AddTransient<IProductDAL>(sp => new ProductDALEF(ConnectionString, sp.GetRequiredService<IMapper>()));
             services.AddTransient<ISupplierDAL>(sp => new SupplierDALEF(ConnectionString, sp.GetRequiredService<IMapper>()));
@@ -58,14 +58,14 @@ namespace TradingCompany.WPF
             services.AddTransient<IProductManager, ProductManager>();
             services.AddTransient<ISupplyManager, SupplyManager>();
 
-            // ViewModels
+         
             services.AddTransient<LoginViewModel>();
-            services.AddTransient<MainViewModel>(); // Головна VM
+            services.AddTransient<MainViewModel>(); 
             services.AddTransient<WarehouseManagerViewModel>();
             services.AddTransient<CreateOrderViewModel>();
             services.AddTransient<ActiveOrdersViewModel>();
 
-            // Windows & Views (Тут реєструємо тільки MainWindow, UserControls реєструвати не обов'язково)
+            
             services.AddTransient<MainWindow>();
 
             return services.BuildServiceProvider();

@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="800">
+             mc:Ignorable="d" d:DesignHeight="600" d:DesignWidth="900">
+
     <Grid Margin="30">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -11,25 +12,108 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Active orders" FontSize="22" FontWeight="Bold" 
+        <TextBlock Text="                                                    Active Supply Orders" FontSize="22" FontWeight="Bold" 
                    Foreground="{StaticResource DarkTextBrush}" Margin="0,0,0,20"/>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding ActiveOrders}" SelectedItem="{Binding SelectedOrder}"
+        <DataGrid x:Name="OrdersGrid" ItemsSource="{Binding ActiveOrders}" 
+                  SelectedItem="{Binding SelectedOrder}"
                   AutoGenerateColumns="False" CanUserAddRows="False"
-                  BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1" Background="White" RowHeight="35">
+                  BorderBrush="{StaticResource AccentBlueBrush}" BorderThickness="1" 
+                  Background="White" RowHeight="45"
+                  RowDetailsVisibilityMode="VisibleWhenSelected"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled" Margin="66,16,58,0" RenderTransformOrigin="0.498,0.544" Grid.Row="1">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="№" Binding="{Binding OrderId}" Width="80" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Date" Binding="{Binding OrderDate, StringFormat=d}" Width="120" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Created By" Binding="{Binding Employee.FirstName}" Width="150" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=N2}" Width="120"/>
-                <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="80"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding OrderId}" Width="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Date" Binding="{Binding OrderDate, StringFormat=d}" Width="100" IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Manager" Binding="{Binding Employee.FirstName}" Width="1.5*" IsReadOnly="True"/>
+
+                <DataGridTextColumn Header="Total" Binding="{Binding TotalAmount, StringFormat=C}" Width="*" FontWeight="Bold" IsReadOnly="True"/>
+
+                <DataGridCheckBoxColumn Header="Active" 
+                                        Binding="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                        Width="70" IsReadOnly="False"/>
             </DataGrid.Columns>
+
+            <DataGrid.RowDetailsTemplate>
+                <DataTemplate>
+                    <Border Background="#F5F9FF" Padding="15" BorderThickness="0,1,0,0" BorderBrush="{StaticResource AccentBlueBrush}">
+                        <StackPanel>
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                    <TextBlock Text="Items from Supplier: " FontWeight="SemiBold" Foreground="Gray" FontSize="14"/>
+                                    <TextBlock Text="{Binding OrderItems[0].Product.Supplier.Brand}" 
+                                               FontWeight="Bold" Foreground="{StaticResource DarkTextBrush}" FontSize="14" Margin="5,0,0,0"/>
+                                </StackPanel>
+
+                                <Button Content="Hide Details ▲" Click="CloseDetails_Click"
+                                        Grid.Column="1"
+                                        Background="Transparent" Foreground="{StaticResource AccentBlueBrush}" 
+                                        BorderThickness="1" BorderBrush="{StaticResource AccentBlueBrush}"
+                                        FontSize="12" Padding="10,5" Height="30"/>
+                            </Grid>
+
+                            <DataGrid ItemsSource="{Binding OrderItems}" AutoGenerateColumns="False" 
+                                      CanUserAddRows="False" IsReadOnly="True"
+                                      BorderThickness="1" BorderBrush="#E0E0E0" Background="White"
+                                      HeadersVisibility="Column"
+                                      
+                                      HorizontalAlignment="Left" 
+                                      MinWidth="750"
+                                      
+                                      MaxHeight="250" 
+                                      RowHeight="32" 
+                                      FontSize="13"
+                                      
+                                      VerticalScrollBarVisibility="Auto"
+                                      ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Product Name" Binding="{Binding Product.Name}" Width="2*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Padding" Value="5"/>
+                                                <Setter Property="FontWeight" Value="Bold"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Category" Binding="{Binding Product.Category.CategoryName}" Width="1.5*">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                                <Setter Property="VerticalAlignment" Value="Center"/>
+                                                <Setter Property="Padding" Value="5"/>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTextColumn Header="Price" Binding="{Binding Product.Price, StringFormat=C}" Width="90"/>
+                                    <DataGridTextColumn Header="Quantity" Binding="{Binding Quantity}" Width="80"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </DataGrid.RowDetailsTemplate>
+
         </DataGrid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button Content="Cancel Order" Command="{Binding CancelOrderCommand}" 
-                    Background="#FFEBEE" Foreground="{StaticResource ErrorBrush}" Width="140" Height="40" Margin="0,0,15,0"/>
-            <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" Width="140" Height="40"/>
+                    Background="#FFEBEE" Foreground="{StaticResource ErrorBrush}" 
+                    Width="140" Height="45" Margin="0,0,15,0"/>
+
+            <Button Content="Save Changes" Command="{Binding SaveChangesCommand}" 
+                    Width="140" Height="45"/>
         </StackPanel>
     </Grid>
 </UserControl>

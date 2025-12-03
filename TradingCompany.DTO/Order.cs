@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TradingCompany.DTO
 {
@@ -10,15 +7,18 @@ namespace TradingCompany.DTO
     {
         public int OrderId { get; set; }
         public int EmployeeId { get; set; }
-        public virtual Employee? Employee { get; set; }
-
         public DateTime OrderDate { get; set; }
         public decimal TotalAmount { get; set; }
         public bool IsActive { get; set; }
 
+      
+        public Employee? Employee { get; set; }
+        public Category? Category { get; set; }
+        public List<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
         public override string ToString()
         {
-            return $"{OrderId}: Employee {Employee}, Date: {OrderDate.ToShortDateString()}, Total: {TotalAmount:C}, Active: {IsActive}";
+            return $"{OrderId}: Date: {OrderDate.ToShortDateString()}, Total: {TotalAmount:C}, Active: {IsActive}";
         }
     }
 }

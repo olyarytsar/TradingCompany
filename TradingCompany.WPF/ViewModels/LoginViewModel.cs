@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Windows; // Потрібно для Application
+using System.Threading.Tasks; 
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;
+using TradingCompany.WPF.Commands;  
+using TradingCompany.WPF.Templates; 
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -16,41 +18,49 @@ namespace TradingCompany.WPF.ViewModels
         public string Login
         {
             get => _login;
-            set { _login = value; OnPropertyChanged(); }
+            set
+            {
+                _login = value;
+                OnPropertyChanged();
+
+                ClearErrors(nameof(Login));
+                if (string.IsNullOrWhiteSpace(_login))
+                {
+                    AddError(nameof(Login), "Login cannot be empty");
+                }
+            }
         }
 
-        // Подія успішного входу
         public Action<Employee> LoginSuccess { get; set; }
 
         public ICommand LoginCommand { get; }
-
-        // Змінили назву на ExitCommand для ясності
         public ICommand ExitCommand { get; }
 
         public LoginViewModel(IAuthManager authManager)
         {
             _authManager = authManager;
 
-            LoginCommand = new RelayCommand(ExecuteLogin);
+            LoginCommand = new AsyncRelayCommand(ExecuteLogin);
 
-            // Ця команда повністю закриває програму
             ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
         }
 
-        private void ExecuteLogin(object parameter)
+        private async Task ExecuteLogin(object parameter)
         {
             var passwordBox = parameter as PasswordBox;
             var password = passwordBox?.Password;
 
-            if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(password))
+            
+            if (HasErrors || string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Please enter credentials.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Please check your login and password.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             try
             {
-                var employee = _authManager.Login(Login, password);
+                
+                Employee employee = await Task.Run(() => _authManager.Login(Login, password));
 
                 if (employee != null)
                 {
@@ -60,17 +70,17 @@ namespace TradingCompany.WPF.ViewModels
                     }
                     else
                     {
-                        MessageBox.Show("Access Denied.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show("Access Denied. You do not have the Warehouse Manager role.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
                 }
                 else
                 {
-                    MessageBox.Show("Invalid login/password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Invalid login or password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error: {ex.Message}");
+                MessageBox.Show($"System Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

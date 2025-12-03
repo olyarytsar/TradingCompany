@@ -2,7 +2,8 @@
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;
+using TradingCompany.WPF.Commands;  
+using TradingCompany.WPF.Templates; 
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -13,7 +14,6 @@ namespace TradingCompany.WPF.ViewModels
         private Employee _currentUser;
         private bool _isLoggedIn;
 
-        // Властивість для приховування меню в XAML
         public bool IsLoggedIn
         {
             get => _isLoggedIn;
@@ -32,7 +32,6 @@ namespace TradingCompany.WPF.ViewModels
             set { _currentViewModel = value; OnPropertyChanged(); }
         }
 
-        // Команди
         public ICommand NavigateToWarehouseCommand { get; }
         public ICommand NavigateToCreateOrderCommand { get; }
         public ICommand NavigateToActiveOrdersCommand { get; }
@@ -42,26 +41,26 @@ namespace TradingCompany.WPF.ViewModels
         {
             _serviceProvider = serviceProvider;
 
+            // Навігація
             NavigateToWarehouseCommand = new RelayCommand(_ => NavigateTo<WarehouseManagerViewModel>());
             NavigateToCreateOrderCommand = new RelayCommand(_ => NavigateTo<CreateOrderViewModel>());
             NavigateToActiveOrdersCommand = new RelayCommand(_ => NavigateTo<ActiveOrdersViewModel>());
             LogoutCommand = new RelayCommand(Logout);
 
-            // ЗАПУСК: Одразу показуємо екран Логіну
             ShowLoginScreen();
         }
 
         private void ShowLoginScreen()
         {
-            IsLoggedIn = false; // Ховає меню
+            IsLoggedIn = false;
             var loginVm = _serviceProvider.GetRequiredService<LoginViewModel>();
 
-            // Підписуємось на успішний вхід
+            // Логіка після успішного входу
             loginVm.LoginSuccess = (user) =>
             {
                 CurrentUser = user;
-                IsLoggedIn = true; // Показує меню
-                NavigateTo<WarehouseManagerViewModel>(); // Переходимо на склад
+                IsLoggedIn = true;
+                NavigateTo<WarehouseManagerViewModel>();
             };
 
             CurrentViewModel = loginVm;
@@ -82,7 +81,7 @@ namespace TradingCompany.WPF.ViewModels
         private void Logout(object obj)
         {
             CurrentUser = null;
-            ShowLoginScreen(); // Повертаємось на екран входу
+            ShowLoginScreen();
         }
     }
 }

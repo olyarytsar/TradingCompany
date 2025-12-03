@@ -2,7 +2,8 @@
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;
+using TradingCompany.WPF.Commands; 
+using TradingCompany.WPF.Templates; 
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -13,6 +14,18 @@ namespace TradingCompany.WPF.ViewModels
 
         private Product _selectedProduct;
         private Employee _currentUser;
+
+        private string _sortOrder = "Name_Asc"; 
+        public string SortOrder
+        {
+            get => _sortOrder;
+            set
+            {
+                _sortOrder = value;
+                OnPropertyChanged();
+                LoadData(); 
+            }
+        }
 
         public Product SelectedProduct
         {
@@ -32,8 +45,8 @@ namespace TradingCompany.WPF.ViewModels
             }
         }
 
-       
         public ICommand RefreshCommand { get; }
+        public ICommand SortCommand { get; } 
 
         public WarehouseManagerViewModel(IProductManager productManager)
         {
@@ -41,13 +54,16 @@ namespace TradingCompany.WPF.ViewModels
 
             RefreshCommand = new RelayCommand(obj => LoadData());
 
+            SortCommand = new RelayCommand<string>(sortKey => SortOrder = sortKey);
+
             LoadData();
         }
 
         private void LoadData()
         {
             Products.Clear();
-            var productsFromDb = _productManager.GetProducts(SearchText, "Name_Asc");
+           
+            var productsFromDb = _productManager.GetProducts(SearchText, SortOrder);
 
             foreach (var p in productsFromDb)
             {

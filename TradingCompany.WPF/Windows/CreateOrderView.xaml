@@ -45,9 +45,9 @@
 
                     <StackPanel Grid.Column="1" VerticalAlignment="Bottom">
                         <TextBlock Text="Price" FontSize="12" Foreground="Gray" Margin="0,0,0,4"/>
-                        <Border Background="{StaticResource PrimaryBlueBrush}" CornerRadius="8" Padding="15,10">
+                        <Border Background="{StaticResource PrimaryBlueBrush}" CornerRadius="8" Padding="15,10" Width="89">
                             <TextBlock Text="{Binding SelectedProduct.Price, StringFormat=C, TargetNullValue='-'}" 
-                                       FontSize="18" FontWeight="Bold" Foreground="{StaticResource DarkTextBrush}"/>
+                                       FontSize="18" FontWeight="Bold" Foreground="{StaticResource DarkTextBrush}" Margin="-15,0,-15,0"/>
                         </Border>
                     </StackPanel>
                 </Grid>
