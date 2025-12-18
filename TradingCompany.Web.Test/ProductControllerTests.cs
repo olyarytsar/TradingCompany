@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NUnit.Framework;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
 using TradingCompany.MVC.Controllers;
