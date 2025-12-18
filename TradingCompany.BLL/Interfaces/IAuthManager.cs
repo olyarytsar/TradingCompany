@@ -1,11 +1,16 @@
-﻿using TradingCompany.DTO;
+﻿using TradingCompany.DALEF.Concrete;
+using TradingCompany.DTO;
 
 namespace TradingCompany.BLL.Interfaces
 {
     public interface IAuthManager
     {
-        Employee Login(string login, string password);
+       
+        bool Login(string login, string password);
 
-        bool IsWarehouseManager(Employee employee);
+        Employee GetEmployeeByLogin(string login);
+        Employee GetEmployeeById(int id);
+        List<Employee> GetEmployees();
+        bool HasRole(Employee employee, RoleType roleType);
     }
 }

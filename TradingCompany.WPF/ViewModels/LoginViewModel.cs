@@ -1,12 +1,13 @@
 ﻿using System;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DTO;
-using TradingCompany.WPF.Commands;  
-using TradingCompany.WPF.Templates; 
+using TradingCompany.WPF.Commands;
+using TradingCompany.WPF.Templates;
+using TradingCompany.DALEF.Concrete;
 
 namespace TradingCompany.WPF.ViewModels
 {
@@ -41,7 +42,6 @@ namespace TradingCompany.WPF.ViewModels
             _authManager = authManager;
 
             LoginCommand = new AsyncRelayCommand(ExecuteLogin);
-
             ExitCommand = new RelayCommand(_ => Application.Current.Shutdown());
         }
 
@@ -50,7 +50,6 @@ namespace TradingCompany.WPF.ViewModels
             var passwordBox = parameter as PasswordBox;
             var password = passwordBox?.Password;
 
-            
             if (HasErrors || string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Please check your login and password.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -59,12 +58,13 @@ namespace TradingCompany.WPF.ViewModels
 
             try
             {
-                
-                Employee employee = await Task.Run(() => _authManager.Login(Login, password));
+                bool isAuthenticated = await Task.Run(() => _authManager.Login(Login, password));
 
-                if (employee != null)
+                if (isAuthenticated)
                 {
-                    if (_authManager.IsWarehouseManager(employee))
+                    var employee = await Task.Run(() => _authManager.GetEmployeeByLogin(Login));
+
+                    if (_authManager.HasRole(employee, RoleType.Manager))
                     {
                         LoginSuccess?.Invoke(employee);
                     }

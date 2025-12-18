@@ -1,0 +1,19 @@
+﻿<ul class="navbar-nav">
+    @if (User.Identity?.IsAuthenticated ?? false)
+    {
+        <li class="nav-item">
+            <span class="nav-link text-dark">Hello @User.Identity?.Name!</span>
+        </li>
+        <li class="nav-item">
+            <form id="logoutForm" class="form-inline" asp-action="Logout" asp-controller="Account" asp-route-returnUrl="@Url.Action("Index", "Home")">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link text-dark" id="login" asp-action="Login" asp-controller="Account">Login</a>
+        </li>
+    }
+</ul>

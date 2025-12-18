@@ -1,6 +1,7 @@
 ﻿using System;
 using TradingCompany.BLL.Interfaces;
 using TradingCompany.DAL.Interfaces;
+using TradingCompany.DALEF.Concrete;
 using TradingCompany.DTO;
 
 namespace TradingCompany.BLL.Concrete
@@ -14,29 +15,35 @@ namespace TradingCompany.BLL.Concrete
             _employeeDal = employeeDal;
         }
 
-        public Employee Login(string login, string password)
+        public bool Login(string login, string password)
         {
-            
-            bool isValid = _employeeDal.Login(login, password);
+            if (string.IsNullOrEmpty(login) || string.IsNullOrEmpty(password))
+                return false;
 
-            if (isValid)
-            {
-               
-                return _employeeDal.GetByLogin(login);
-            }
-
-            return null;
+            return _employeeDal.Login(login, password);
         }
 
-        public bool IsWarehouseManager(Employee employee)
+        public Employee GetEmployeeByLogin(string login)
         {
-            if (employee == null || employee.Role == null) return false;
+            return _employeeDal.GetByLogin(login);
+        }
 
-            string role = employee.Role.RoleName;
+        public Employee GetEmployeeById(int id)
+        {
+            return _employeeDal.GetById(id);
+        }
 
-            return role == "Manager";
+        public List<Employee> GetEmployees()
+        {
+            return _employeeDal.GetAll();
+        }
 
+        public bool HasRole(Employee employee, RoleType roleType)
+        {
+            if (employee == null || employee.Role == null)
+                return false;
 
+            return employee.Role.RoleName.Equals(roleType.ToString(), StringComparison.OrdinalIgnoreCase);
         }
     }
 }

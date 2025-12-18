@@ -1,0 +1,91 @@
+:root {
+    --bg-color: #fcfaff;
+    --main-purple: #9575cd;
+    --dark-purple: #5e35b1;
+    --light-purple: #ede7f6;
+}
+
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: var(--bg-color) !important;
+    color: #4a148c !important;
+    margin: 0;
+}
+
+.container {
+    flex: 1 0 auto;
+}
+
+.btn-main, .btn-primary, .btn-success, input[type="submit"] {
+    background-color: var(--main-purple) !important;
+    border: 1px solid var(--dark-purple) !important;
+    color: white !important;
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+    font-weight: 500 !important;
+    box-shadow: 0 4px 6px rgba(149, 117, 205, 0.2) !important;
+    cursor: pointer;
+}
+
+    .btn-main:hover, input[type="submit"]:hover {
+        background-color: var(--dark-purple) !important;
+        color: white !important;
+    }
+
+.table {
+    background-color: white !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+    border: 1px solid var(--light-purple) !important;
+}
+
+    .table thead th {
+        background-color: var(--light-purple) !important;
+        color: var(--dark-purple) !important;
+        border-bottom: 2px solid var(--main-purple) !important;
+        padding: 15px !important;
+    }
+
+    .table td {
+        padding: 12px 15px !important;
+        border-bottom: 1px solid #eee !important;
+    }
+
+dt {
+    color: #673ab7 !important;
+}
+
+dd {
+    color: #311b92 !important;
+}
+
+a {
+    color: var(--main-purple);
+    text-decoration: none;
+}
+
+    a:hover {
+        color: var(--dark-purple);
+        text-decoration: underline;
+    }
+
+.footer {
+    flex-shrink: 0;
+    position: relative !important;
+    margin-top: 50px !important;
+    padding: 20px 0 !important;
+    background-color: white !important;
+    border-top: 1px solid #d1c4e9 !important;
+}

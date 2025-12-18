@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TradingCompany.DTO.Product>
+
+@{
+    ViewData["Title"] = "Product List";
+}
+
+<h1>Product List</h1> <p>
+    <a asp-action="Create" class="btn btn-main">Add New Product</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ProductId)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.Price)</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Supplier</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ProductId)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@item.Price.ToString("C")</td>
+                <td>@Html.DisplayFor(modelItem => item.QuantityInStock)</td>
+                <td>@(item.Category?.CategoryName ?? "N/A")</td>
+                <td>@(item.Supplier?.Brand ?? "N/A")</td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ProductId }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ProductId }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ProductId })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

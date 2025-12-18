@@ -12,19 +12,30 @@ namespace TradingCompany.BLL.Tests
     public class ProductManagerTests
     {
         private Mock<IProductDAL> _productDalMock;
+        private Mock<ICategoryDAL> _categoryDalMock;
+        private Mock<ISupplierDAL> _supplierDalMock; 
         private ProductManager _sut;
 
         [SetUp]
         public void SetUp()
         {
             _productDalMock = new Mock<IProductDAL>(MockBehavior.Strict);
-            _sut = new ProductManager(_productDalMock.Object);
+            _categoryDalMock = new Mock<ICategoryDAL>(MockBehavior.Strict);
+            _supplierDalMock = new Mock<ISupplierDAL>(MockBehavior.Strict);
+
+            _sut = new ProductManager(
+                _productDalMock.Object,
+                _categoryDalMock.Object,
+                _supplierDalMock.Object
+            );
         }
 
         [TearDown]
         public void TearDown()
         {
             _productDalMock.VerifyAll();
+            _categoryDalMock.VerifyAll();
+            _supplierDalMock.VerifyAll();
         }
 
         [Test]
@@ -53,6 +64,34 @@ namespace TradingCompany.BLL.Tests
 
             // Assert
             Assert.That(result, Is.SameAs(product));
+        }
+
+        [Test]
+        public void GetAllCategories_ShouldReturnListFromCategoryDal()
+        {
+            // Arrange
+            var list = new List<Category>();
+            _categoryDalMock.Setup(d => d.GetAll()).Returns(list);
+
+            // Act
+            var result = _sut.GetAllCategories();
+
+            // Assert
+            Assert.That(result, Is.SameAs(list));
+        }
+
+        [Test]
+        public void GetAllSuppliers_ShouldReturnListFromSupplierDal()
+        {
+            // Arrange
+            var list = new List<Supplier>();
+            _supplierDalMock.Setup(d => d.GetAll()).Returns(list);
+
+            // Act
+            var result = _sut.GetAllSuppliers();
+
+            // Assert
+            Assert.That(result, Is.SameAs(list));
         }
 
         [Test]
@@ -97,7 +136,7 @@ namespace TradingCompany.BLL.Tests
         {
             // Arrange
             var p1 = new Product { SupplierId = 1, Name = "B Product" };
-            var p2 = new Product { SupplierId = 2, Name = "A Product" }; 
+            var p2 = new Product { SupplierId = 2, Name = "A Product" };
             var p3 = new Product { SupplierId = 1, Name = "A Product" };
 
             _productDalMock.Setup(d => d.GetAll()).Returns(new List<Product> { p1, p2, p3 });
@@ -107,7 +146,7 @@ namespace TradingCompany.BLL.Tests
 
             // Assert
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result[0].Name, Is.EqualTo("A Product")); 
+            Assert.That(result[0].Name, Is.EqualTo("A Product"));
             Assert.That(result[1].Name, Is.EqualTo("B Product"));
         }
     }

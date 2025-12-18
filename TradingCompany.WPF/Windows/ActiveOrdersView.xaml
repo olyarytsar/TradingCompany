@@ -52,7 +52,7 @@
                                                FontWeight="Bold" Foreground="{StaticResource DarkTextBrush}" FontSize="14" Margin="5,0,0,0"/>
                                 </StackPanel>
 
-                                <Button Content="Hide Details ▲" Click="CloseDetails_Click"
+                                <Button Content="Hide Details" Click="CloseDetails_Click"
                                         Grid.Column="1"
                                         Background="Transparent" Foreground="{StaticResource AccentBlueBrush}" 
                                         BorderThickness="1" BorderBrush="{StaticResource AccentBlueBrush}"

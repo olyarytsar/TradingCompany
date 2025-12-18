@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using TradingCompany.BLL.Concrete;
 using TradingCompany.DAL.Interfaces;
+using TradingCompany.DALEF.Concrete; 
 using TradingCompany.DTO;
 
 namespace TradingCompany.BLL.Tests
@@ -25,40 +26,41 @@ namespace TradingCompany.BLL.Tests
             _employeeDalMock.VerifyAll();
         }
 
+
         [Test]
-        public void Login_ShouldReturnEmployee_WhenCredentialsAreValid()
+        public void Login_ShouldReturnTrue_WhenCredentialsAreValid()
         {
             // Arrange
             string login = "admin";
             string password = "123";
-            var employee = new Employee { Login = login };
 
             _employeeDalMock.Setup(d => d.Login(login, password)).Returns(true);
-            _employeeDalMock.Setup(d => d.GetByLogin(login)).Returns(employee);
 
             // Act
-            var result = _sut.Login(login, password);
+            bool result = _sut.Login(login, password);
 
             // Assert
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Login, Is.EqualTo(login));
+            Assert.IsTrue(result);
         }
 
         [Test]
-        public void Login_ShouldReturnNull_WhenCredentialsAreInvalid()
+        public void Login_ShouldReturnFalse_WhenCredentialsAreInvalid()
         {
             // Arrange
-            _employeeDalMock.Setup(d => d.Login("user", "wrong")).Returns(false);
+            string login = "user";
+            string password = "wrong";
+
+            _employeeDalMock.Setup(d => d.Login(login, password)).Returns(false);
 
             // Act
-            var result = _sut.Login("user", "wrong");
+            bool result = _sut.Login(login, password);
 
             // Assert
-            Assert.That(result, Is.Null);
+            Assert.IsFalse(result);
         }
 
         [Test]
-        public void IsWarehouseManager_ShouldReturnTrue_WhenRoleIsManager()
+        public void HasRole_ShouldReturnTrue_WhenRoleMatches()
         {
             // Arrange
             var employee = new Employee
@@ -67,14 +69,14 @@ namespace TradingCompany.BLL.Tests
             };
 
             // Act
-            var result = _sut.IsWarehouseManager(employee);
+            var result = _sut.HasRole(employee, RoleType.Manager);
 
             // Assert
-            Assert.That(result, Is.True);
+            Assert.IsTrue(result);
         }
 
         [Test]
-        public void IsWarehouseManager_ShouldReturnFalse_WhenRoleIsDifferent()
+        public void HasRole_ShouldReturnFalse_WhenRoleIsDifferent()
         {
             // Arrange
             var employee = new Employee
@@ -83,22 +85,22 @@ namespace TradingCompany.BLL.Tests
             };
 
             // Act
-            var result = _sut.IsWarehouseManager(employee);
+            var result = _sut.HasRole(employee, RoleType.Manager);
 
             // Assert
-            Assert.That(result, Is.False);
+            Assert.IsFalse(result);
         }
 
         [Test]
-        public void IsWarehouseManager_ShouldReturnFalse_WhenEmployeeOrRoleIsNull()
+        public void HasRole_ShouldReturnFalse_WhenEmployeeOrRoleIsNull()
         {
             // Act
-            var result1 = _sut.IsWarehouseManager(null);
-            var result2 = _sut.IsWarehouseManager(new Employee { Role = null });
+            var result1 = _sut.HasRole(null, RoleType.Manager);
+            var result2 = _sut.HasRole(new Employee { Role = null }, RoleType.Manager);
 
             // Assert
-            Assert.That(result1, Is.False);
-            Assert.That(result2, Is.False);
+            Assert.IsFalse(result1);
+            Assert.IsFalse(result2);
         }
     }
 }

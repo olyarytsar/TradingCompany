@@ -41,7 +41,7 @@ namespace TradingCompany.WPF.ViewModels
         {
             _serviceProvider = serviceProvider;
 
-            // Навігація
+           
             NavigateToWarehouseCommand = new RelayCommand(_ => NavigateTo<WarehouseManagerViewModel>());
             NavigateToCreateOrderCommand = new RelayCommand(_ => NavigateTo<CreateOrderViewModel>());
             NavigateToActiveOrdersCommand = new RelayCommand(_ => NavigateTo<ActiveOrdersViewModel>());
@@ -55,7 +55,6 @@ namespace TradingCompany.WPF.ViewModels
             IsLoggedIn = false;
             var loginVm = _serviceProvider.GetRequiredService<LoginViewModel>();
 
-            // Логіка після успішного входу
             loginVm.LoginSuccess = (user) =>
             {
                 CurrentUser = user;

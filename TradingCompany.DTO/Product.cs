@@ -1,4 +1,6 @@
-﻿namespace TradingCompany.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TradingCompany.DTO
 {
     public class Product
     {
