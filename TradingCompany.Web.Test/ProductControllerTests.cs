@@ -26,6 +26,12 @@ namespace TradingCompany.MVC.Tests
             _controller = new ProductController(_mockManager.Object, _mockMapper.Object, _mockLogger.Object);
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            _controller?.Dispose();
+        }
+
         [Test]
         public void Index_ReturnsViewWithProducts()
         {
@@ -69,7 +75,7 @@ namespace TradingCompany.MVC.Tests
             Assert.IsInstanceOf<NotFoundResult>(result);
         }
 
-       
+
         [Test]
         public void Create_Get_ReturnsViewWithModel()
         {
@@ -81,7 +87,7 @@ namespace TradingCompany.MVC.Tests
             Assert.IsInstanceOf<EditProductModel>(result.Model);
         }
 
-      
+
         [Test]
         public void Create_Post_ValidModel_RedirectsToIndex()
         {
@@ -104,7 +110,7 @@ namespace TradingCompany.MVC.Tests
         public void Create_Post_InvalidModel_ReturnsView()
         {
             // Arrange
-            var model = new EditProductModel { Name = "" }; 
+            var model = new EditProductModel { Name = "" };
             _controller.ModelState.AddModelError("Name", "Required");
 
             // Act
@@ -123,7 +129,7 @@ namespace TradingCompany.MVC.Tests
             var productDto = new Product();
 
             _mockMapper.Setup(m => m.Map<Product>(model)).Returns(productDto);
-            
+
             _mockManager.Setup(m => m.CreateProduct(productDto)).Returns((Product)null);
 
             // Act
@@ -154,7 +160,7 @@ namespace TradingCompany.MVC.Tests
             Assert.AreEqual(model, result.Model);
         }
 
-  
+
         [Test]
         public void Edit_Post_ValidModel_RedirectsToIndex()
         {
@@ -224,7 +230,7 @@ namespace TradingCompany.MVC.Tests
             int id = 1;
             var product = new Product { ProductId = id, Name = "Linked Product" };
 
-            
+
             _mockManager.Setup(m => m.DeleteProduct(id)).Returns(false);
             _mockManager.Setup(m => m.GetProductById(id)).Returns(product);
 
